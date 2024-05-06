@@ -16,7 +16,3 @@ class TickersEnum(Enum):
     TXN = "Texas Instruments Incorporated"
     IBM = "IBM"
     INTC = "Intel"
-
-
-def get_stocks_from_ticker():
-    pass
