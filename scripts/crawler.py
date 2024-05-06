@@ -1,13 +1,16 @@
 import json
+from datetime import datetime
 from pathlib import Path
 
 import click
 import requests_cache
 import yfinance as yf  # type: ignore
+from click.types import DateTime
 from pyrate_limiter import Duration, Limiter, RequestRate
 from requests import Session
 from requests_cache import CacheMixin, SQLiteCache
 from requests_ratelimiter import LimiterMixin, MemoryQueueBucket
+from rich.progress import track
 
 from src.services.cronjobs.stocks import TickersEnum
 
@@ -27,7 +30,7 @@ session = CachedLimiterSession(
 
 
 def main(start: str, end: str, output_file: Path):
-    for ticker in TickersEnum:
+    for ticker in track(TickersEnum):
         ticker_name = ticker.name.lower()
 
         yf_ticker = yf.Ticker(ticker_name, session=session)
@@ -53,8 +56,8 @@ def main(start: str, end: str, output_file: Path):
         exists=True, file_okay=False, dir_okay=True, writable=True, path_type=Path
     ),
 )
-def main_cli(start: str, end: str, output_file: Path):
-    main(start, end, output_file)
+def main_cli(start: datetime, end: datetime, output_file: Path):
+    main(str(start.date()), str(end.date()), output_file)
 
 
 if __name__ == "__main__":
